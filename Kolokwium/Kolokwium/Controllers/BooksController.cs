@@ -1,4 +1,5 @@
-﻿using Kolokwium.Repositories;
+﻿using Kolokwium.Models.DTOs;
+using Kolokwium.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Kolokwium.Controllers;
@@ -31,5 +32,12 @@ public class BooksController : ControllerBase
         {
             return StatusCode(500, e.Message);
         }
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> AddBook(BookDTO bookDto)
+    {
+        var result = await _booksRepository.AddNewBook(bookDto);
+        result
     }
 }

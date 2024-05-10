@@ -70,8 +70,23 @@ public class BooksRepository : IBooksRepository
         using var cmd = new SqlCommand();
 
         cmd.Connection = con;
-        cmd.CommandText = "INSERT INTO Books (title) values @title";
+        cmd.CommandText = "INSERT INTO Books (title) values @title; SELECT Scope identity as PK";
+        cmd.Parameters.AddWithValue("@title", bookDto.Title);
+        var result = await cmd.ExecuteScalarAsync();
         
+
+        Book book = new Book
+        {
+            Title = bookDto.Title,
+            Authors = new List<AuthorDTO>()
+        };
+        foreach (var author in bookDto.Authors)
+        {
+            await AddNewAuthor(author);
+            book.Authors.Add(author);
+        }
+
+        return book;
     }
 
     public async Task<int> AddNewAuthor(AuthorDTO authorDto)
